@@ -14,10 +14,12 @@ class Subnets:
         self.bonds = subtensor.bonds
         self.difficulty = subtensor.difficulty
         self.get_all_subnets_info = subtensor.get_all_subnets_info
+        self.get_parents = subtensor.get_parents
         self.get_children = subtensor.get_children
         self.get_children_pending = subtensor.get_children_pending
         self.get_current_weight_commit_info = subtensor.get_current_weight_commit_info
         self.get_hyperparameter = subtensor.get_hyperparameter
+        self.get_liquidity_list = subtensor.get_liquidity_list
         self.get_neuron_for_pubkey_and_subnet = (
             subtensor.get_neuron_for_pubkey_and_subnet
         )
@@ -25,6 +27,8 @@ class Subnets:
         self.get_subnet_burn_cost = subtensor.get_subnet_burn_cost
         self.get_subnet_hyperparameters = subtensor.get_subnet_hyperparameters
         self.get_subnet_info = subtensor.get_subnet_info
+        self.get_subnet_price = subtensor.get_subnet_price
+        self.get_subnet_prices = subtensor.get_subnet_prices
         self.get_subnet_owner_hotkey = subtensor.get_subnet_owner_hotkey
         self.get_subnet_reveal_period_epochs = subtensor.get_subnet_reveal_period_epochs
         self.get_subnet_validator_permits = subtensor.get_subnet_validator_permits

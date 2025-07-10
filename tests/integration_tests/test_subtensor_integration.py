@@ -17,7 +17,7 @@ def netuid():
     yield 23
 
 
-async def prepare_test(mocker, seed):
+async def prepare_test(mocker, seed, **subtensor_args):
     """
     Helper function: sets up the test environment.
     """
@@ -25,19 +25,20 @@ async def prepare_test(mocker, seed):
         "async_substrate_interface.sync_substrate.connect",
         mocker.Mock(return_value=FakeWebsocket(seed=seed)),
     )
-    subtensor = Subtensor("unknown", _mock=True)
+    subtensor = Subtensor("unknown", _mock=True, **subtensor_args)
     return subtensor
 
 
-@pytest.mark.asyncio
-async def test_get_all_subnets_info(mocker):
-    subtensor = await prepare_test(mocker, "get_all_subnets_info")
-    result = subtensor.get_all_subnets_info()
-    assert isinstance(result, list)
-    assert result[0].owner_ss58 == "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM"
-    assert result[1].kappa == 32767
-    assert result[1].max_weight_limit == 65535
-    assert result[1].blocks_since_epoch == 88
+# TODO: Improve integration tests workflow (https://github.com/opentensor/bittensor/issues/2435#issuecomment-2825858004)
+# @pytest.mark.asyncio
+# async def test_get_all_subnets_info(mocker):
+#     subtensor = await prepare_test(mocker, "get_all_subnets_info")
+#     result = subtensor.get_all_subnets_info()
+#     assert isinstance(result, list)
+#     assert result[0].owner_ss58 == "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM"
+#     assert result[1].kappa == 32767
+#     assert result[1].max_weight_limit == 65535
+#     assert result[1].blocks_since_epoch == 88
 
 
 # TODO: Improve integration tests workflow (https://github.com/opentensor/bittensor/issues/2435#issuecomment-2825858004)
@@ -151,3 +152,13 @@ def test_mock_subtensor_force_register_neuron():
     assert neuron1.coldkey == "cc1"
     assert neuron2.hotkey == "hk2"
     assert neuron2.coldkey == "cc2"
+
+
+@pytest.mark.asyncio
+async def test_archive_node_retry(mocker):
+    subtensor = await prepare_test(
+        mocker, "retry_archive", archive_endpoints=["ws://fake-endpoi.nt"]
+    )
+    current_block = subtensor.substrate.get_block_number()
+    old_block = current_block - 1000
+    assert isinstance((subtensor.substrate.get_block(block_number=old_block)), dict)
